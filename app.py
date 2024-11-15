@@ -4,10 +4,21 @@ import os
 import logging
 from flask import Flask, send_from_directory, render_template, request
 from flask_cors import CORS
+
 from blueprints.get_weather import get_weather_bp
 from blueprints.get_weather_gps import get_weather_gps_bp
 from blueprints.download import download_bp
 from blueprints.get_title import get_title_bp  # Assurez-vous que ce blueprint existe
+
+from blueprints.create import create_bp
+from blueprints.edit import edit_bp
+from blueprints.delete import delete_bp
+from blueprints.list import list_bp
+
+
+from flask_mysqldb import MySQL
+
+
 
 # Configurer le logging
 logging.basicConfig(
@@ -33,6 +44,22 @@ app.register_blueprint(get_weather_bp)
 app.register_blueprint(get_weather_gps_bp)
 app.register_blueprint(download_bp)
 app.register_blueprint(get_title_bp)  # Assurez-vous que ce blueprint est défini
+
+
+app.register_blueprint(create_bp)
+app.register_blueprint(edit_bp)
+app.register_blueprint(delete_bp)
+app.register_blueprint(list_bp)
+
+# Ajouter la configuration de MySQL
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = ''  # Mettez votre mot de passe MySQL ici
+app.config['MYSQL_DB'] = 'db_api_test'
+
+# Initialiser MySQL
+mysql = MySQL(app)
+
 
 # Middleware pour loguer les requêtes
 @app.before_request

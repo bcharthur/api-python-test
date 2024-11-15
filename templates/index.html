@@ -3,17 +3,29 @@
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>API YouTube & Météo Downloader</title>
+    <title>API YouTube, Météo & CRUD</title>
     <!-- Bootstrap CSS -->
     <link
         href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
         rel="stylesheet"
         crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+<link
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css"
+    rel="stylesheet"
+    crossorigin="anonymous">
 </head>
 <body>
+<div aria-live="polite" aria-atomic="true" class="position-relative">
+  <div class="toast-container position-fixed top-0 end-0 p-3" id="toastContainer" style="z-index: 1055;">
+    <!-- Les toasts seront ajoutés dynamiquement ici -->
+  </div>
+</div>
+
+
     <div class="container mt-5">
-        <h1 class="text-center mb-4">API YouTube & Météo Downloader</h1>
+
+        <h1 class="text-center mb-4">API YouTube, Météo & Gestion CRUD</h1>
 
         <!-- Section pour Obtenir le Titre -->
         <div class="card mb-4">
@@ -66,7 +78,7 @@
             </div>
         </div>
 
-        <!-- Nouvelle Section pour la Météo par GPS -->
+        <!-- Section pour la Météo par GPS -->
         <div class="card mb-4">
             <div class="card-header">
                 Obtenir la Météo par Localisation GPS
@@ -76,15 +88,79 @@
                 <div id="weatherGPSResult" class="mt-3"></div>
             </div>
         </div>
-    </div>
 
-    <!-- Inclure les fichiers JavaScript externalisés -->
+ <!-- Section CRUD -->
+    <div class="card mb-4">
+        <div class="card-header">
+            Gestion des Items
+        </div>
+        <div class="card-body">
+            <!-- Ajouter un Item -->
+            <form id="createForm">
+                <div class="form-group">
+                    <label for="itemName">Ajouter un nouvel item :</label>
+                    <input type="text" class="form-control" id="itemName" placeholder="Nom de l'item" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </form>
+
+            <!-- Liste des Items -->
+            <h5 class="mt-4">Liste des items :</h5>
+            <ul id="itemList" class="list-group">
+                <!-- Liste dynamique -->
+            </ul>
+        </div>
+    </div>
+</div>
+
+<!-- Modale Édition -->
+<div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editModalLabel">Modifier un Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <div class="mb-3">
+                        <label for="editItemName" class="form-label">Nom</label>
+                        <input type="text" class="form-control" id="editItemName" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modale Suppression -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Supprimer un Item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir supprimer cet item ?</p>
+                <button id="confirmDeleteBtn" class="btn btn-danger">Supprimer</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Inclure les fichiers JavaScript -->
     <script src="{{ url_for('static', filename='js/get-info.js') }}"></script>
     <script src="{{ url_for('static', filename='js/download.js') }}"></script>
     <script src="{{ url_for('static', filename='js/get-weather.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/get-weather-gps.js') }}"></script> <!-- Nouveau fichier JS -->
+    <script src="{{ url_for('static', filename='js/get-weather-gps.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/create.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/edit.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/delete.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/list.js') }}"></script>
 
-    <!-- Bootstrap JS et dépendances (Optionnel pour certaines fonctionnalités Bootstrap) -->
+    <!-- Bootstrap JS -->
     <script
         src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
         crossorigin="anonymous"></script>
