@@ -15,10 +15,7 @@ from blueprints.edit import edit_bp
 from blueprints.delete import delete_bp
 from blueprints.list import list_bp
 
-
 from flask_mysqldb import MySQL
-
-
 
 # Configurer le logging
 logging.basicConfig(
@@ -36,7 +33,8 @@ CORS(app)  # Activer CORS pour toutes les routes
 # Configuration
 DOWNLOAD_FOLDER = os.path.join(app.root_path, 'downloads')
 if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER)
+    os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
+    os.chmod(DOWNLOAD_FOLDER, 0o755)  # Permissions en lecture/écriture/exécution pour le propriétaire et lecture/exécution pour les autres
     logging.info(f"[APP] Dossier 'downloads' créé à {DOWNLOAD_FOLDER}")
 
 # Enregistrer les Blueprints
@@ -44,7 +42,6 @@ app.register_blueprint(get_weather_bp)
 app.register_blueprint(get_weather_gps_bp)
 app.register_blueprint(download_bp)
 app.register_blueprint(get_title_bp)  # Assurez-vous que ce blueprint est défini
-
 
 app.register_blueprint(create_bp)
 app.register_blueprint(edit_bp)
@@ -59,7 +56,6 @@ app.config['MYSQL_DB'] = 'db_api_test'
 
 # Initialiser MySQL
 mysql = MySQL(app)
-
 
 # Middleware pour loguer les requêtes
 @app.before_request
