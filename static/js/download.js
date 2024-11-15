@@ -15,32 +15,35 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
+        // Afficher le message de téléchargement en cours
         resultDownloadDiv.innerHTML = `<div class="alert alert-info" role="alert">Téléchargement en cours...</div>`;
 
-        // Envoyer la requête GET pour télécharger la vidéo
+        // Désactiver le bouton et ajouter le spinner
+        downloadBtn.disabled = true;
+        const originalBtnContent = downloadBtn.innerHTML; // Sauvegarder le contenu original
+        downloadBtn.innerHTML = `
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            Téléchargement...
+        `;
+
+        // Envoyer la requête avec fetch
         fetch(`/api/download?ytb_url=${encodeURIComponent(ytbUrl)}`)
             .then(response => {
-                const contentType = response.headers.get('Content-Type');
                 if (!response.ok) {
                     return response.json().then(errData => { throw new Error(errData.message || 'Erreur lors du téléchargement.'); });
                 }
-                if (contentType && contentType.includes('application/json')) {
-                    return response.json().then(errData => { throw new Error(errData.message || 'Erreur lors du téléchargement.'); });
-                }
-                return response.blob().then(blob => ({ blob, headers: response.headers }));
-            })
-            .then(({ blob, headers }) => {
-                // Extraire le nom de fichier depuis le header 'Content-Disposition'
-                const disposition = headers.get('Content-Disposition');
+                const disposition = response.headers.get('Content-Disposition');
                 let filename = 'video.mp4'; // Nom par défaut
-                if (disposition && disposition.indexOf('attachment') !== -1) {
+                if (disposition && disposition.includes('attachment')) {
                     const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/;
                     const matches = filenameRegex.exec(disposition);
                     if (matches != null && matches[1]) {
                         filename = matches[1].replace(/['"]/g, '');
                     }
                 }
-
+                return response.blob().then(blob => ({ blob, filename }));
+            })
+            .then(({ blob, filename }) => {
                 // Créer un lien temporaire pour télécharger le fichier
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -50,10 +53,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 a.click();
                 a.remove();
                 window.URL.revokeObjectURL(url);
+
+                // Afficher le message de succès
                 resultDownloadDiv.innerHTML = `<div class="alert alert-success" role="alert">Téléchargement terminé. Le fichier a été enregistré.</div>`;
             })
             .catch(err => {
                 resultDownloadDiv.innerHTML = `<div class="alert alert-danger" role="alert"><strong>Erreur:</strong> ${err.message}</div>`;
+            })
+            .finally(() => {
+                // Rétablir le contenu original du bouton et réactiver le bouton
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalBtnContent;
             });
     });
 });
