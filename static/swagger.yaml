@@ -1,0 +1,76 @@
+openapi: 3.0.0
+info:
+  title: YouTube Downloader API
+  version: 1.0.0
+  description: API pour télécharger des vidéos YouTube et récupérer leurs titres.
+servers:
+  - url: http://localhost:5000
+paths:
+  /api/get-title:
+    get:
+      summary: Récupérer le titre d'une vidéo YouTube
+      parameters:
+        - in: query
+          name: ytb_url
+          schema:
+            type: string
+          required: true
+          description: URL de la vidéo YouTube
+      responses:
+        '200':
+          description: Titre récupéré avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  title:
+                    type: string
+        '400':
+          description: Erreur lors de la récupération du titre
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+  /api/download:
+    get:
+      summary: Télécharger une vidéo YouTube
+      parameters:
+        - in: query
+          name: ytb_url
+          schema:
+            type: string
+          required: true
+          description: URL de la vidéo YouTube
+      responses:
+        '200':
+          description: Vidéo téléchargée avec succès
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  filename:
+                    type: string
+                  download_url:
+                    type: string
+        '400':
+          description: Erreur lors du téléchargement de la vidéo
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string

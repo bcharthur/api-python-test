@@ -1,0 +1,65 @@
+# app.py
+
+import os
+import logging
+from flask import Flask, send_from_directory, render_template, request
+from flask_cors import CORS
+from blueprints.get_weather import get_weather_bp
+from blueprints.get_weather_gps import get_weather_gps_bp
+from blueprints.download import download_bp
+from blueprints.get_title import get_title_bp  # Assurez-vous que ce blueprint existe
+
+# Configurer le logging
+logging.basicConfig(
+    level=logging.INFO,  # Utilisez DEBUG pour plus de détails si nécessaire
+    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+    handlers=[
+        logging.StreamHandler(),
+        logging.FileHandler('app.log')  # Enregistre les logs dans 'app.log'
+    ]
+)
+
+app = Flask(__name__)
+CORS(app)  # Activer CORS pour toutes les routes
+
+# Configuration
+DOWNLOAD_FOLDER = os.path.join(app.root_path, 'downloads')
+if not os.path.exists(DOWNLOAD_FOLDER):
+    os.makedirs(DOWNLOAD_FOLDER)
+    logging.info(f"[APP] Dossier 'downloads' créé à {DOWNLOAD_FOLDER}")
+
+# Enregistrer les Blueprints
+app.register_blueprint(get_weather_bp)
+app.register_blueprint(get_weather_gps_bp)
+app.register_blueprint(download_bp)
+app.register_blueprint(get_title_bp)  # Assurez-vous que ce blueprint est défini
+
+# Middleware pour loguer les requêtes
+@app.before_request
+def log_request_info():
+    logging.info(f"Incoming request: {request.method} {request.url}")
+    logging.info(f"Headers: {request.headers}")
+    logging.info(f"Body: {request.get_data()}")
+
+@app.after_request
+def log_response_info(response):
+    if not response.direct_passthrough:
+        try:
+            response_data = response.get_data(as_text=True)
+            logging.info(f"Response data: {response_data}")
+        except Exception as e:
+            logging.error(f"Erreur lors de la récupération des données de la réponse: {e}")
+    else:
+        logging.info("Response data: [Passthrough mode, non enregistré]")
+    return response
+
+@app.route('/')
+def index():
+    return render_template('index.html')
+
+@app.route('/downloads/<path:filename>', methods=['GET'])
+def download_file(filename):
+    return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
+
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000, debug=True)  # Remplacez debug=True par False en production
