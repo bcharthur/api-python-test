@@ -8,7 +8,8 @@ from flask_cors import CORS
 from blueprints.get_weather import get_weather_bp
 from blueprints.get_weather_gps import get_weather_gps_bp
 from blueprints.download import download_bp
-from blueprints.get_title import get_title_bp  # Assurez-vous que ce blueprint existe
+from blueprints.get_title import get_title_bp
+from blueprints.get_minia import get_minia_bp  # Importer le blueprint get_minia
 
 from blueprints.create import create_bp
 from blueprints.edit import edit_bp
@@ -41,7 +42,8 @@ if not os.path.exists(DOWNLOAD_FOLDER):
 app.register_blueprint(get_weather_bp)
 app.register_blueprint(get_weather_gps_bp)
 app.register_blueprint(download_bp)
-app.register_blueprint(get_title_bp)  # Assurez-vous que ce blueprint est défini
+app.register_blueprint(get_title_bp)
+app.register_blueprint(get_minia_bp)  # Enregistrer le blueprint get_minia
 
 app.register_blueprint(create_bp)
 app.register_blueprint(edit_bp)
