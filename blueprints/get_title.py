@@ -10,7 +10,7 @@ def get_title():
     ytb_url = request.args.get('ytb_url')
     logging.info(f"[GET_TITLE] URL reçue: {ytb_url}")
     if not ytb_url:
-        return jsonify({'status': 'error', 'message': 'URL YouTube manquante.'}), 400
+        return jsonify({'status': 'error', 'message': 'URL web manquante.'}), 400
     try:
         info = get_video_info(ytb_url)
         title = info.get('title', 'Titre non disponible')

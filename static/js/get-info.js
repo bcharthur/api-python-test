@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
         event.preventDefault(); // Empêche le rechargement de la page
         const url = document.getElementById('title_url').value.trim();
         if (!url) {
-            alert('Veuillez entrer une URL YouTube valide.');
+            alert('Veuillez entrer une URL web valide.');
             return;
         }
 
