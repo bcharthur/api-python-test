@@ -59,25 +59,40 @@
             </div>
         </div>
 
-<!-- Section pour Obtenir la Miniature de la Vidéo -->
-<div class="card mb-4">
-    <div class="card-header">
-        Obtenir la Miniature de la Vidéo
-    </div>
-    <div class="card-body">
-        <form id="getThumbnailForm">
-            <div class="form-group">
-                <label for="thumbnail_url">URL de la Vidéo:</label>
-                <input type="text" class="form-control" id="thumbnail_url" placeholder="youtube, twitter, instagram et autres" required>
+        <!-- Section pour Obtenir la Miniature de la Vidéo -->
+        <div class="card mb-4">
+            <div class="card-header">
+                Obtenir la Miniature de la Vidéo
             </div>
-            <button type="submit" class="btn btn-secondary" id="getThumbnailBtn">Afficher la miniature</button>
-            <button type="button" class="btn btn-outline-secondary ml-2" id="downloadThumbnailBtn">Télécharger la miniature</button>
-        </form>
-        <div id="resultThumbnail" class="mt-3"></div>
-    </div>
-</div>
+            <div class="card-body">
+                <form id="getThumbnailForm">
+                    <div class="form-group">
+                        <label for="thumbnail_url">URL de la Vidéo:</label>
+                        <input type="text" class="form-control" id="thumbnail_url" placeholder="youtube, twitter, instagram et autres" required>
+                    </div>
+                    <button type="submit" class="btn btn-secondary" id="getThumbnailBtn">Obtenir la miniature</button>
+                    <button type="button" class="btn btn-outline-secondary ml-2" id="downloadThumbnailBtn">Télécharger la miniature</button>
+                </form>
+                <div id="resultThumbnail" class="mt-3"></div>
+            </div>
+        </div>
 
-
+        <!-- Nouvelle Section pour Télécharger la Musique de la Vidéo -->
+        <div class="card mb-4">
+            <div class="card-header">
+                Télécharger la Musique de la Vidéo
+            </div>
+            <div class="card-body">
+                <form id="getMusiqueForm">
+                    <div class="form-group">
+                        <label for="musique_url">URL de la Vidéo:</label>
+                        <input type="text" class="form-control" id="musique_url" placeholder="Entrez l'URL YouTube" required>
+                    </div>
+                    <button type="button" class="btn btn-outline-info ml-2" id="downloadMusiqueBtn">Télécharger la musique</button>
+                </form>
+                <div id="resultMusique" class="mt-3"></div>
+            </div>
+        </div>
 
         <!-- Section pour la Météo par Département -->
         <div class="card mb-4">
@@ -175,10 +190,11 @@
         crossorigin="anonymous"></script>
 
     <!-- Inclure les fichiers JavaScript personnalisés -->
+    <script src="/static/js/main.js"></script> <!-- Nouveau script pour les toasts -->
     <script src="/static/js/get-info.js"></script>
     <script src="/static/js/download.js"></script>
     <script src="/static/js/get-minia.js"></script>
-
+    <script src="/static/js/get-musique.js"></script> <!-- Nouveau script -->
     <script src="/static/js/get-weather.js"></script>
     <script src="/static/js/get-weather-gps.js"></script>
     <script src="/static/js/create.js"></script>
