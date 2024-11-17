@@ -32,19 +32,45 @@ logging.basicConfig(
 app = Flask(__name__)
 CORS(app)  # Activer CORS pour toutes les routes
 
-# Configuration
+# Configuration pour les dossiers de cache
 DOWNLOAD_FOLDER = os.path.join(app.root_path, 'downloads')
-if not os.path.exists(DOWNLOAD_FOLDER):
-    os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
-    os.chmod(DOWNLOAD_FOLDER, 0o755)  # Permissions en lecture/écriture/exécution pour le propriétaire et lecture/exécution pour les autres
-    logging.info(f"[APP] Dossier 'downloads' créé à {DOWNLOAD_FOLDER}")
-
-# Configuration pour le cache des musiques
 MUSIQUE_FOLDER = os.path.join(app.root_path, 'musique')
-if not os.path.exists(MUSIQUE_FOLDER):
-    os.makedirs(MUSIQUE_FOLDER, exist_ok=True)
-    os.chmod(MUSIQUE_FOLDER, 0o755)
-    logging.info(f"[APP] Dossier 'musique' créé à {MUSIQUE_FOLDER}")
+MINIA_FOLDER = os.path.join(app.root_path, 'minia')
+
+
+def clear_cache(folder_path):
+    """
+    Supprime tous les fichiers dans le dossier spécifié.
+
+    Args:
+        folder_path (str): Chemin absolu vers le dossier à vider.
+    """
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path, exist_ok=True)
+        logging.info(f"[Cache] Dossier '{os.path.basename(folder_path)}' créé à {folder_path}")
+        return
+
+    try:
+        for filename in os.listdir(folder_path):
+            file_path = os.path.join(folder_path, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                logging.info(f"[Cache] Supprimé: {file_path}")
+    except Exception as e:
+        logging.error(f"[Cache] Erreur lors de la suppression des fichiers dans {folder_path}: {e}")
+
+
+# Vider les dossiers de cache au démarrage
+def initialize_cache():
+    logging.info("[Cache] Initialisation des dossiers de cache...")
+    clear_cache(MINIA_FOLDER)
+    clear_cache(MUSIQUE_FOLDER)
+    clear_cache(DOWNLOAD_FOLDER)
+    logging.info("[Cache] Initialisation terminée.")
+
+
+# Initialiser les caches avant d'enregistrer les blueprints
+initialize_cache()
 
 # Enregistrer les Blueprints
 app.register_blueprint(get_weather_bp)
@@ -68,12 +94,14 @@ app.config['MYSQL_DB'] = 'db_api_test'
 # Initialiser MySQL
 mysql = MySQL(app)
 
+
 # Middleware pour loguer les requêtes
 @app.before_request
 def log_request_info():
     logging.info(f"Incoming request: {request.method} {request.url}")
     logging.info(f"Headers: {request.headers}")
     logging.info(f"Body: {request.get_data()}")
+
 
 @app.after_request
 def log_response_info(response):
@@ -87,13 +115,16 @@ def log_response_info(response):
         logging.info("Response data: [Passthrough mode, non enregistré]")
     return response
 
+
 @app.route('/')
 def index():
     return render_template('index.html')
 
+
 @app.route('/downloads/<path:filename>', methods=['GET'])
 def download_file(filename):
     return send_from_directory(DOWNLOAD_FOLDER, filename, as_attachment=True)
+
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)  # Remplacez debug=True par False en production
