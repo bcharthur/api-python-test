@@ -22,11 +22,22 @@ def get_thumbnail():
     if not url:
         return jsonify({'error': 'URL manquante'}), 400
 
-    # Vérifier si la miniature est déjà en cache
+    # Définir le répertoire de cache
     cache_dir = os.path.join(current_app.root_path, 'minia')
     if not os.path.exists(cache_dir):
         os.makedirs(cache_dir, exist_ok=True)
         logging.info(f"[get_minia] Dossier 'minia' créé à {cache_dir}")
+
+    # Supprimer les anciennes miniatures dans le cache
+    try:
+        for filename in os.listdir(cache_dir):
+            file_path = os.path.join(cache_dir, filename)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+                logging.info(f"[get_minia] Supprimé: {file_path}")
+    except Exception as e:
+        logging.error(f"[get_minia] Erreur lors de la suppression des anciennes miniatures: {e}")
+        return jsonify({'error': 'Erreur lors de la gestion du cache'}), 500
 
     # Utiliser yt_dlp pour extraire les informations de la vidéo
     try:
@@ -42,16 +53,15 @@ def get_thumbnail():
             filename = f"{video_id}{ext}"
             filepath = os.path.join(cache_dir, filename)
 
-            # Vérifier si la miniature est déjà téléchargée
-            if not os.path.exists(filepath):
-                logging.info(f"[get_minia] Téléchargement de la miniature depuis {thumbnail_url}")
-                response = requests.get(thumbnail_url, stream=True)
-                if response.status_code == 200:
-                    with open(filepath, 'wb') as f:
-                        for chunk in response.iter_content(1024):
-                            f.write(chunk)
-                else:
-                    return jsonify({'error': 'Échec du téléchargement de la miniature'}), 500
+            # Télécharger la miniature
+            logging.info(f"[get_minia] Téléchargement de la miniature depuis {thumbnail_url}")
+            response = requests.get(thumbnail_url, stream=True)
+            if response.status_code == 200:
+                with open(filepath, 'wb') as f:
+                    for chunk in response.iter_content(1024):
+                        f.write(chunk)
+            else:
+                return jsonify({'error': 'Échec du téléchargement de la miniature'}), 500
 
             # Retourner l'URL de la miniature
             thumbnail_url_cached = f"/minia/{filename}"
