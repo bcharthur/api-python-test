@@ -8,7 +8,9 @@ from flask_cors import CORS
 from blueprints.get_weather import get_weather_bp
 from blueprints.get_weather_gps import get_weather_gps_bp
 from blueprints.download import download_bp
-from blueprints.get_title import get_title_bp  # Assurez-vous que ce blueprint existe
+from blueprints.get_title import get_title_bp
+from blueprints.get_minia import get_minia_bp
+from blueprints.get_musique import get_musique_bp  # Importer le blueprint get_musique
 
 from blueprints.create import create_bp
 from blueprints.edit import edit_bp
@@ -37,11 +39,20 @@ if not os.path.exists(DOWNLOAD_FOLDER):
     os.chmod(DOWNLOAD_FOLDER, 0o755)  # Permissions en lecture/écriture/exécution pour le propriétaire et lecture/exécution pour les autres
     logging.info(f"[APP] Dossier 'downloads' créé à {DOWNLOAD_FOLDER}")
 
+# Configuration pour le cache des musiques
+MUSIQUE_FOLDER = os.path.join(app.root_path, 'musique')
+if not os.path.exists(MUSIQUE_FOLDER):
+    os.makedirs(MUSIQUE_FOLDER, exist_ok=True)
+    os.chmod(MUSIQUE_FOLDER, 0o755)
+    logging.info(f"[APP] Dossier 'musique' créé à {MUSIQUE_FOLDER}")
+
 # Enregistrer les Blueprints
 app.register_blueprint(get_weather_bp)
 app.register_blueprint(get_weather_gps_bp)
 app.register_blueprint(download_bp)
-app.register_blueprint(get_title_bp)  # Assurez-vous que ce blueprint est défini
+app.register_blueprint(get_title_bp)
+app.register_blueprint(get_minia_bp)
+app.register_blueprint(get_musique_bp)  # Enregistrer le blueprint get_musique
 
 app.register_blueprint(create_bp)
 app.register_blueprint(edit_bp)
