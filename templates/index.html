@@ -23,7 +23,7 @@
     </div>
 
     <div class="container mt-5">
-        <h1 class="text-center mb-4">API Web download, Météo & Gestion CRUD</h1>
+        <h1 class="text-center mb-4">API Web download</h1>
 
         <!-- Section pour Obtenir le Titre -->
         <div class="card mb-4">
@@ -95,55 +95,55 @@
         </div>
 
         <!-- Section pour la Météo par Département -->
-        <div class="card mb-4">
-            <div class="card-header">
-                Obtenir la Météo par Département
-            </div>
-            <div class="card-body">
-                <form id="getWeatherForm">
-                    <div class="form-group">
-                        <label for="weather_dept">Numéro du Département:</label>
-                        <input type="text" class="form-control" id="weather_dept" placeholder="Ex: 75" required>
-                    </div>
-                    <button type="submit" class="btn btn-info" id="getWeatherBtn">Obtenir la météo</button>
-                </form>
-                <div id="weatherResult" class="mt-3"></div>
-            </div>
-        </div>
+{#        <div class="card mb-4">#}
+{#            <div class="card-header">#}
+{#                Obtenir la Météo par Département#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <form id="getWeatherForm">#}
+{#                    <div class="form-group">#}
+{#                        <label for="weather_dept">Numéro du Département:</label>#}
+{#                        <input type="text" class="form-control" id="weather_dept" placeholder="Ex: 75" required>#}
+{#                    </div>#}
+{#                    <button type="submit" class="btn btn-info" id="getWeatherBtn">Obtenir la météo</button>#}
+{#                </form>#}
+{#                <div id="weatherResult" class="mt-3"></div>#}
+{#            </div>#}
+{#        </div>#}
 
         <!-- Section pour la Météo par GPS -->
-        <div class="card mb-4">
-            <div class="card-header">
-                Obtenir la Météo par Localisation GPS
-            </div>
-            <div class="card-body">
-                <button type="button" class="btn btn-warning" id="getWeatherGPSBtn">Obtenir la météo via GPS</button>
-                <div id="weatherGPSResult" class="mt-3"></div>
-            </div>
-        </div>
+{#        <div class="card mb-4">#}
+{#            <div class="card-header">#}
+{#                Obtenir la Météo par Localisation GPS#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <button type="button" class="btn btn-warning" id="getWeatherGPSBtn">Obtenir la météo via GPS</button>#}
+{#                <div id="weatherGPSResult" class="mt-3"></div>#}
+{#            </div>#}
+{#        </div>#}
 
         <!-- Section CRUD -->
-        <div class="card mb-4">
-            <div class="card-header">
-                Gestion des Items
-            </div>
-            <div class="card-body">
-                <!-- Ajouter un Item -->
-                <form id="createForm">
-                    <div class="form-group">
-                        <label for="itemName">Ajouter un nouvel item :</label>
-                        <input type="text" class="form-control" id="itemName" placeholder="Nom de l'item" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Ajouter</button>
-                </form>
-
-                <!-- Liste des Items -->
-                <h5 class="mt-4">Liste des items :</h5>
-                <ul id="itemList" class="list-group">
-                    <!-- Liste dynamique -->
-                </ul>
-            </div>
-        </div>
+{#        <div class="card mb-4">#}
+{#            <div class="card-header">#}
+{#                Gestion des Items#}
+{#            </div>#}
+{#            <div class="card-body">#}
+{#                <!-- Ajouter un Item -->#}
+{#                <form id="createForm">#}
+{#                    <div class="form-group">#}
+{#                        <label for="itemName">Ajouter un nouvel item :</label>#}
+{#                        <input type="text" class="form-control" id="itemName" placeholder="Nom de l'item" required>#}
+{#                    </div>#}
+{#                    <button type="submit" class="btn btn-primary">Ajouter</button>#}
+{#                </form>#}
+{##}
+{#                <!-- Liste des Items -->#}
+{#                <h5 class="mt-4">Liste des items :</h5>#}
+{#                <ul id="itemList" class="list-group">#}
+{#                    <!-- Liste dynamique -->#}
+{#                </ul>#}
+{#            </div>#}
+{#        </div>#}
     </div>
 
     <!-- Modale Édition -->
