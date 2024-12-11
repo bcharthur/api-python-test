@@ -1,16 +1,17 @@
 # blueprints/download.py
 
-from flask import Blueprint, request, jsonify, send_file, current_app
+from flask import Blueprint, request, jsonify, send_file, current_app, Response
 from flask_cors import cross_origin
 import logging
 import yt_dlp
 import os
 import glob
+import flask  # Import du module Flask
 
 download_bp = Blueprint('download_bp', __name__)
 
 @download_bp.route('/api/download', methods=['GET'])
-@cross_origin()  # Activer CORS pour cette route
+@cross_origin(origins="*")  # Autorise toutes les origines pour le développement
 def download_video():
     ytb_url = request.args.get('ytb_url')
     logging.info(f"[DOWNLOAD] Requête reçue avec ytb_url={ytb_url}")
@@ -50,10 +51,8 @@ def download_video():
         logging.info("[DOWNLOAD] Démarrage du téléchargement avec yt-dlp...")
         with yt_dlp.YoutubeDL(ydl_opts) as ydl:
             info_dict = ydl.extract_info(ytb_url, download=True)
-            # Récupérer le chemin absolu du fichier téléchargé
             download_path = info_dict.get('filepath', None)
             if not download_path:
-                # Fallback si 'filepath' n'est pas présent
                 video_id = info_dict.get('id', 'video')
                 ext = info_dict.get('ext', 'mp4')
                 download_path = os.path.join(downloads_dir, f"{video_id}.{ext}")
@@ -75,15 +74,33 @@ def download_video():
             logging.error(f"[DOWNLOAD] Le fichier téléchargé n'est pas accessible en lecture: {download_path}")
             return jsonify({'status': 'error', 'message': 'Le fichier téléchargé n\'est pas accessible.'}), 500
 
-        # Retourner le fichier téléchargé avec HTTP 200
         logging.info(f"[DOWNLOAD] Envoi du fichier: {download_path}")
-        return send_file(
-            download_path,
-            as_attachment=True,
-            download_name=filename,  # Utiliser 'download_name' pour définir le nom du fichier
-            mimetype='video/mp4',
-            conditional=False
-        )
+
+        # Obtenir la version de Flask correctement
+        flask_version = flask.__version__
+        logging.info(f"[DOWNLOAD] Version de Flask: {flask_version}")
+
+        # Déterminer la méthode d'envoi en fonction de la version de Flask
+        major_version = int(flask_version.split('.')[0])
+        if major_version >= 2:
+            response = send_file(
+                download_path,
+                as_attachment=True,
+                download_name=filename,
+                mimetype='video/mp4',
+                conditional=False
+            )
+        else:
+            response = send_file(
+                download_path,
+                as_attachment=True,
+                attachment_filename=filename,  # Utiliser 'attachment_filename' pour les versions < 2.0
+                mimetype='video/mp4',
+                conditional=False
+            )
+
+        logging.info(f"[DOWNLOAD] En-têtes de réponse: {response.headers}")
+        return response
 
     except yt_dlp.utils.DownloadError as e:
         logging.error(f"[DOWNLOAD] yt-dlp Error: {e}")

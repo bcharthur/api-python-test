@@ -5,6 +5,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const downloadBtn = document.getElementById('downloadBtn');
     const resultDownloadDiv = document.getElementById('resultDownload');
 
+    if (!downloadForm || !downloadBtn || !resultDownloadDiv) {
+        console.error("Les éléments du formulaire de téléchargement ne sont pas trouvés.");
+        return;
+    }
+
     downloadForm.addEventListener('submit', function(e) {
         e.preventDefault(); // Empêche le rechargement de la page
 
@@ -29,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Envoyer la requête avec fetch
         fetch(`/api/download?ytb_url=${encodeURIComponent(ytbUrl)}`)
             .then(response => {
+                console.log('Réponse reçue:', response);
                 if (!response.ok) {
                     return response.json().then(errData => { throw new Error(errData.message || 'Erreur lors du téléchargement.'); });
                 }
@@ -41,9 +47,18 @@ document.addEventListener('DOMContentLoaded', function() {
                         filename = matches[1].replace(/['"]/g, '');
                     }
                 }
-                return response.blob().then(blob => ({ blob, filename }));
+                console.log('Nom de fichier déterminé:', filename);
+                return response.blob().then(blob => {
+                    console.log('Blob reçu:', blob);
+                    return { blob, filename };
+                });
             })
             .then(({ blob, filename }) => {
+                // Vérifiez que le blob a une taille non nulle
+                if (blob.size === 0) {
+                    throw new Error('Le fichier téléchargé est vide.');
+                }
+
                 // Créer un lien temporaire pour télécharger le fichier
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -56,8 +71,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // Afficher le message de succès
                 resultDownloadDiv.innerHTML = `<div class="alert alert-success" role="alert">Téléchargement terminé. Le fichier a été enregistré.</div>`;
+                console.log('Téléchargement réussi.');
             })
             .catch(err => {
+                console.error('Erreur lors du téléchargement:', err);
                 resultDownloadDiv.innerHTML = `<div class="alert alert-danger" role="alert"><strong>Erreur:</strong> ${err.message}</div>`;
             })
             .finally(() => {
